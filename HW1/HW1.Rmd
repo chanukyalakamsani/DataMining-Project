@@ -1,0 +1,215 @@
+---
+title: "HW1"
+author: "Chanukya"
+date: "9/25/2019"
+output: html_document
+---
+```{r}
+library(dplyr)
+library(PerformanceAnalytics)
+```
+
+
+###1()
+
+#### a) Yes
+#### It is required to use data mining practices to forecast the future values based on previous data,it is not something which is database and retrieving the information.
+
+####b)No
+####since they vary drastically and they don't depend on the previous data.
+
+####c) Yes
+#### suppose we are able to derive relationship if particular students gets "A"  in one subject then there is high probability on of getting "A" in operating system they we can predict the students who are likely to "A" in operating systems.
+
+####d)Yes
+#### we do it by association method which is part data mining process
+
+####d)No
+#### we are not forecasting anything, we are just retrieving the data which is present. we can do it by simple SQL query.
+
+
+
+
+###2)
+####    Index               Discrete or Continous         quantitative or qualitative        nominal or ordinal or interval or ration
+####a) Cellphone brands          Discrete                      qualitative                             nominal
+####b) IQ levels                 continous                      quantitative                           Interval
+####C) The states of United       Discrete                      qualitative                            nominal
+####D) The price of laptios      Continous                      quantitative                           Interval
+####E) Pass or Fail              Discrete                        qualitative                           nominal                     
+
+                
+
+
+
+###3)
+### a) simple matching coefficient 
+#### x = c(1,0,1,1,0,1,0) 
+#### y = c(1,1,0,1,0,0,1)
+#### result = same element at given index/total number of elements
+#### result = 1+0+0+1+1+0+0/1+1+1+1+1+1+1
+#### result = 3/7 = .42
+
+### b) Jaccard coefficient
+####  M11=  x =1 and y =1
+####  M10=  x=1 and y=0
+####  M01=  x=0 and y =1
+#### result = M11/(M10+M01+M11)
+#### result = (1+0+0+1+0+0+0)/(1+1+1+1+1+1) = 2/6 = 1/3 = .333
+
+
+### c) Cosine Correlation
+#### sqrt = square root
+####  x = (1,0,1,1,0,1,0), y = (1,1,0,1,0,0,1)
+####  theta = cos^-1(|a|*|b|/sqrt(a^2+b^2))
+
+
+```{r}
+### theta = cos^(-1)((((1x1)+(0x1)+(1x0)+(1x1)+(0X0)+(1x0)+(1x1)))/sqrt((1^2+1^2+1^2+1^2))++((1^2+1^2+1^2+1^2)))
+```
+#### theta = cos^-1(2/sqrt(8))
+#### theta = cos^-1(2/2xsqrt(2))
+#### theta = cos^-1(1/sqrt(2))
+#### theta = 45 degree's
+
+### d)Hamming Distance
+
+#### x = (1,0,1,1,0,1,0), y = (1,1,0,1,0,0,1)
+#### for hamming distance 1x0=1 0x1=0 0x0=1 1x1 =0
+#### for hamming distance between x and y
+####  x,y = ((1x1)+(0x1)+(1x0)+(1x1)+(0x0)+(1X0)+(0x1))
+#### hamming distance between x,y = (1+1+1+1)
+#### hamming distance between x,y = 4
+
+
+### 2)
+a)
+
+##### (-2.05, 2.32), (-0.41, 5.36)
+###Euclidean distance
+
+####euclidean_distance =  sqrt{(x2-x1)^2 - (y2-y1)^2}
+
+####euclidean_distance = sqrt{(-2.05-(-0.41))^2 + (2.32-5.36)^2}
+
+####euclidean_distance = sqrt(10.88)
+
+###euclidean_distance = 3.29
+
+
+
+
+###4
+```{r}
+###4
+
+#1
+
+getmode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+getmean <- function(v) {
+  uniqv <- sum(v)
+  l <- length(v)
+  return(uniqv/l)
+}
+
+#getmean(cr$X01)
+cr <- read.csv("/Users/chanukya/Documents/GitHub/DataMining/HW1/crx.data",header=F)
+summary(cr)
+
+
+
+final <- function(cr){
+cr$V1 <- as.factor(cr$V1)
+cr$V2 <- as.numeric(cr$V2)
+cr$V3 <- as.numeric(cr$V3)
+cr$V4 <- as.factor(cr$V4)
+cr$V5 <- as.factor(cr$V5)
+cr$V6 <- as.character(cr$V6)
+cr$V6 <- as.factor(cr$V6)
+cr$V7<- as.character(cr$V7)
+cr$V7 <- as.factor(cr$V7)
+cr$V8 <- as.numeric(cr$V8)
+cr$V9 <- as.factor(cr$V9)
+cr$V10 <- as.factor(cr$V10)
+cr$V11 <- as.numeric(cr$V11)
+cr$V12 <- as.factor(cr$V12)
+cr$V13 <- as.factor(cr$V13)
+cr$V11 <-as.numeric(cr$V14)
+cr$V15 <- as.numeric(cr$V15)
+cr$V16 <- as.factor(cr$V16)
+
+
+for (i in 1:length(colnames(cr))){
+  for (j in 1:length(cr[,(colnames(cr)[i])])){
+      if (class(cr[,(colnames(cr)[i])]) == "factor"){
+         if (cr[j,i] == "?"){
+          cr[j,i] <- getmode(cr[,(colnames(cr)[i])])
+        }
+      }
+    if (class(cr[,(colnames(cr)[i])]) == "numeric"){
+      if (cr[j,i] == "?"){
+        cr[j,i] <- getmean(cr[,(colnames(cr)[i])])
+      }
+    }
+  }
+}
+cr$V14[cr$V14 == "?"] <- getmean(cr$v14)
+cr$V6[cr$V6 == "?"] <- getmode(cr$V6)
+return(cr)
+}   
+cr <- final(cr)
+summary(cr)
+
+cr$V2 <- as.numeric(as.character(cr$V2))
+cr$V3 <- as.numeric(as.character(cr$V3))
+cr$V8 <- as.numeric(as.character(cr$V8))
+cr$V11 <-as.numeric(as.character(cr$V11))
+cr$V14 <-as.numeric(as.character(cr$V14))
+cr$V15 <-as.numeric(as.character(cr$V15))
+mydata <- as.numeric(cr$V2, cr$V3, cr$V8, cr$V11, cr$V14, cr$V15)
+
+
+result <- cr %>%select(V2, V3, V8, V11, V14, V15)
+set.seed(100)
+result <- data.frame(result)
+#result
+
+```
+
+```{r}
+####2
+#a
+for ( i in 1:length(result)){
+  print(class(result[,i]))
+}
+rando_sample <- result[sample(690, size=100, replace = T),]
+#View(rando_sample)
+
+#b 
+
+pairs(rando_sample, histogram=TRUE, pch=19)
+chart.Correlation(rando_sample, histogram=TRUE, pch=19)
+#cor(rando_Sample)
+
+#d
+
+Normalize <- function(s1){
+  for ( i in 1:length(s1)){
+     s1[i] = ((s1[i]-mean(s1))/sqrt(sum((s1[i]-mean(s1))^2)))
+  }
+  return(s1)
+}
+rando_sample <- scale(rando_sample)
+
+
+#e
+#pairs(rando_sample)
+chart.Correlation(rando_sample, histogram=TRUE, pch=19)
+
+
+
+#3) It didnot effect the correlation. We can see that before normalization and after normalization, correlation in data is almost same.
+```
