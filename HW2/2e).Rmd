@@ -1,0 +1,51 @@
+---
+title: "HW2_2"
+author: "Chanukya"
+date: "10/9/2019"
+output: html_document
+---
+
+```{r}
+
+#2e)
+library(caret)
+set.seed(12345)
+
+# Set up caret to perform 10-fold cross validation repeated 3 times
+
+in_train <- sample(nrow(data1))
+data1 <- data1[in_train,]
+train_data <- data1[1:300,]
+test_data  <- data1[301:nrow(data1),]
+train_data$Class <- as.factor(train_data$Class)
+vars = c("SpecimenNumber","Eccentricity","AspectRatio","Elongation","Solidity","StochasticConvexity","IsoperimetricFactor","MaximalIndentationDepth","Lobedness","AvgIntensity","AvgContrast","Smoothness","ThirdMoment","Uniformity","Entropy")
+#colnames(train_data)
+#crossvalidation
+caret.control <- trainControl(method = "repeatedcv",
+                              number = 3,
+                              repeats = 2)
+rpart.cv <- train(Class ~ ., 
+                  data = train_data,
+                  method = "rpart",
+                  trControl = caret.control,
+                  tuneLength = 15)
+plot(rpart.cv)
+plot(rpart.cv$finalModel)
+summary(rpart.cv)
+predicted <- predict(rpart.cv, newdata = test_data[, vars])
+test_data$Class <- as.factor(test_data$Class)
+#cm <- confusionMatrix(test_data$Class,predicted)
+#cm
+#cm$overall["Accuracy"]
+#accuracy_rpart <- cm$overall["Accuracy"]
+test_Dat <- test_data$Class
+count = 0
+for (i in 1:length(test_Dat)){
+  if (predicted[i] == test_Dat[i]){
+    count = count+1
+  }
+}
+error_rate = 1- (count/length(test_Dat))
+error_rate
+
+```
